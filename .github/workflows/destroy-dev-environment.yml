@@ -1,5 +1,5 @@
 # Destroys all resources created in the Dev GCP environment
-name: dev-destroy-resume
+name: destroy-dev-environment
 
 on:
   workflow_dispatch:
