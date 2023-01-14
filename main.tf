@@ -33,7 +33,7 @@ resource "google_storage_bucket" "static_website" {
 }
 
 resource "google_storage_bucket" "test_bucket" {
-  name          = "terraform-test-${random_id.instance_id.hex}"
+  name          = "another-test-${random_id.instance_id.hex}"
   location      = "NORTHAMERICA-NORTHEAST1"
   force_destroy = true
 }
