@@ -8,8 +8,8 @@ name: dev-deploy-resume
 on:
   # Triggers on push to any non-main branch
   push:
-    branches:
-      - "!main"
+    branches-ignore:
+      - main
 
   # Allow for manually deploying the DEV env, as we may want to be able to turn it on and off later.
   workflow_dispatch:
