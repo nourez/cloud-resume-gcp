@@ -31,3 +31,9 @@ resource "google_storage_bucket" "static_website" {
     not_found_page   = "error.html"
   }
 }
+
+resource "google_storage_bucket" "test_bucket" {
+  name          = "terraform-test-${random_id.instance_id.hex}"
+  location      = "NORTHAMERICA-NORTHEAST1"
+  force_destroy = true
+}
