@@ -32,4 +32,4 @@ jobs:
           echo We're not using the build phase just yet
           echo do we wanna do unit tests in dev?
           echo Soon, we'll have some Docker and NextJS to play with here!
-          echo This is the beginning of something cool
+          echo This is the beginning of something neat
