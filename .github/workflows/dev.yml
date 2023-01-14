@@ -1,16 +1,17 @@
-# This is a basic workflow to help you get started with Actions
+# Creates a dev GCP environment for working on the Cloud Resume Challenge
+# This workflow does NOT automatically destroy the env when you're done
+# Be sure to trigger the destroy workflow after to avoid sad wallets
 
-name: CI
+name: dev-deploy-resume
 
 # Controls when the workflow will run
 on:
-  # Triggers the workflow on push or pull request events but only for the "main" branch
+  # Triggers on push to any non-main branch
   push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+    branches:
+      - "!main"
 
-  # Allows you to run this workflow manually from the Actions tab
+  # Allow for manually deploying the DEV env, as we may want to be able to turn it on and off later.
   workflow_dispatch:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
@@ -25,12 +26,9 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
 
-      # Runs a single command using the runners shell
-      - name: Run a one-line script
-        run: echo Hello, world!
-
       # Runs a set of commands using the runners shell
       - name: Run a multi-line script
         run: |
-          echo Add other actions to build,
-          echo test, and deploy your project.
+          echo We're not using the build phase just yet
+          echo do we wanna do unit tests in dev?
+          echo Soon, we'll have some Docker and NextJS to play with here!
