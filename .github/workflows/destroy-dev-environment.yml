@@ -41,7 +41,7 @@ jobs:
       - name: Terraform Destroy
         run: terraform destroy -auto-approve -input=false
 
-      - name: Update deployment status (failure)
+      - name: Update deployment status
         uses: chrnorm/deployment-status@v2
         with:
           token: ${{ github.token }}
