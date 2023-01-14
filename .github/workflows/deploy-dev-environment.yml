@@ -2,7 +2,7 @@
 # This workflow does NOT automatically destroy the env when you're done
 # Be sure to trigger the destroy workflow after to avoid sad wallets
 
-name: dev-deploy-resume
+name: deploy-dev-environment
 
 # Controls when the workflow will run
 on:
