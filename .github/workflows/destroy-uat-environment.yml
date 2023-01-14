@@ -27,7 +27,7 @@ jobs:
         id: deployment
         with:
           token: ${{ github.token }}
-          environment: dev
+          environment: uat
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v1
@@ -47,6 +47,6 @@ jobs:
         uses: chrnorm/deployment-status@v2
         with:
           token: ${{ github.token }}
-          environment: dev
+          environment: uat
           state: inactive
           deployment-id: ${{ steps.deployment.outputs.deployment_id }}
