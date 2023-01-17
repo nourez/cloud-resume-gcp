@@ -4,8 +4,8 @@ resource "random_id" "instance_id" {
 
 # Create a bucket to store the static website 
 resource "google_storage_bucket" "static_website" {
-  name                        = "terraform-test-${random_id.instance_id.hex}"
-  location                    = "NORTHAMERICA-NORTHEAST2"
+  name                        = "cloud-resume-${random_id.instance_id.hex}"
+  location                    = "US"
   storage_class               = "STANDARD"
   force_destroy               = true
   uniform_bucket_level_access = true
@@ -16,8 +16,9 @@ resource "google_storage_bucket" "static_website" {
   }
 }
 
-resource "google_storage_bucket" "test_bucket" {
-  name          = "another-test-${random_id.instance_id.hex}"
-  location      = "NORTHAMERICA-NORTHEAST1"
-  force_destroy = true
+# Make bucket public by granting allUsers READER access
+resource "google_storage_bucket_access_control" "public_rule" {
+  bucket = google_storage_bucket.static_website.id
+  role   = "READER"
+  entity = "allUsers"
 }
