@@ -2,6 +2,15 @@ resource "random_id" "instance_id" {
   byte_length = 8
 }
 
+resource "google_storage_bucket_iam_binding" "public_access_policy" {
+  bucket = google_storage_bucket.static_website.name
+  role   = "roles/storage.objectViewer"
+
+  members = [
+    "allUsers",
+  ]
+}
+
 # Create a bucket to store the static website 
 resource "google_storage_bucket" "static_website" {
   name                        = "cloud-resume-${random_id.instance_id.hex}"
@@ -16,9 +25,3 @@ resource "google_storage_bucket" "static_website" {
   }
 }
 
-# Make bucket public by granting allUsers READER access
-resource "google_storage_bucket_access_control" "public_rule" {
-  bucket = google_storage_bucket.static_website.id
-  role   = "READER"
-  entity = "allUsers"
-}
