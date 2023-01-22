@@ -16,6 +16,7 @@ on:
 
 permissions:
   contents: read
+  id-token: write
 
 defaults:
   run:
@@ -34,6 +35,13 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
+
+      - id: auth
+        name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v1
+        with:
+          workload_identity_provider: projects/460847146789/locations/global/workloadIdentityPools/dev-pool/providers/dev-provider
+          service_account: terraform-cloud@cloud-resume-dev.iam.gserviceaccount.com
 
       # Runs a set of commands using the runners shell
       - name: Setup Terraform

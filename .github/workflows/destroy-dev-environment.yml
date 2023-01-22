@@ -7,6 +7,7 @@ on:
 permissions:
   contents: read
   deployments: write
+  id-token: write
 
 defaults:
   run:
@@ -19,6 +20,13 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+
+      - id: auth
+        name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v1
+        with:
+          workload_identity_provider: projects/460847146789/locations/global/workloadIdentityPools/dev-pool/providers/dev-provider
+          service_account: terraform-cloud@cloud-resume-dev.iam.gserviceaccount.com
 
       - uses: chrnorm/deployment-action@v2
         name: Create GitHub deployment
