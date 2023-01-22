@@ -8,6 +8,7 @@ on:
 
 permissions:
   contents: read
+  id-token: write
 
 defaults:
   run:
@@ -26,6 +27,13 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
+
+      - id: auth
+        name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v1
+        with:
+          workload_identity_provider: projects/358069862793/locations/global/workloadIdentityPools/uat-pool/providers/uat-provider
+          service_account: terraform-cloud@cloud-resume-uat.iam.gserviceaccount.com
 
       # Trigger CodeCov, to be expanded further in future commits
       - uses: codecov/codecov-action@v3
