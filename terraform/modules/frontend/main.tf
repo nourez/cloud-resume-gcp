@@ -104,3 +104,26 @@ resource "google_compute_global_forwarding_rule" "resume_forwarding_rule" {
   ip_address = google_compute_global_address.resume_ip.address
   port_range = "443"
 }
+
+# Redirect HTTP requests to HTTPS
+resource "google_compute_url_map" "resume_redirect_map" {
+  name = "cloud-resume-lb-http-redirect"
+
+  default_url_redirect {
+    redirect_response_code = "MOVED_PERMANENTLY_DEFAULT"
+    strip_query            = false
+    https_redirect         = true
+  }
+}
+
+resource "google_compute_target_http_proxy" "resume_redirect_proxy" {
+  name    = "cloud-resume-lb-redirect-proxy"
+  url_map = google_compute_url_map.resume_redirect_map.self_link
+}
+
+resource "google_compute_global_forwarding_rule" "resume_redirect_rule" {
+  name       = "cloud-resume-lb-redirect-rule"
+  target     = google_compute_target_http_proxy.resume_redirect_proxy.self_link
+  ip_address = google_compute_global_address.resume_ip.address
+  port_range = "80"
+}
