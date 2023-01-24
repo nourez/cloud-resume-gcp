@@ -59,3 +59,7 @@ resource "google_storage_bucket_object" "nourez_jpg" {
   source       = "../../frontend/nourez.jpg"
   content_type = "image/jpeg"
 }
+
+resource "google_compute_global_address" "resume_ip" {
+  name = "cloud-resume-ip"
+}
