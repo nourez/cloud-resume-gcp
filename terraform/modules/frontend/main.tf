@@ -81,3 +81,9 @@ resource "google_compute_managed_ssl_certificate" "resume_cert" {
     domains = var.cert_domains
   }
 }
+
+# Route all requests to the backend bucket
+resource "google_compute_url_map" "resume_url_map" {
+  name            = "cloud-resume-url-map"
+  default_service = google_compute_backend_bucket.resume_backend.self_link
+}
