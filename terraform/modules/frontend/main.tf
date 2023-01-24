@@ -72,3 +72,12 @@ resource "google_compute_backend_bucket" "resume_backend" {
   description = "Backend bucket for the cloud resume website"
   enable_cdn  = true
 }
+
+# Create a HTTPS certificate for the frontend {
+resource "google_compute_managed_ssl_certificate" "resume_cert" {
+  name        = "cloud-resume-cert"
+  description = "Certificate for the cloud resume website"
+  managed {
+    domains = var.cert_domains
+  }
+}
