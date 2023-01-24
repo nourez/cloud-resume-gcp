@@ -60,6 +60,15 @@ resource "google_storage_bucket_object" "nourez_jpg" {
   content_type = "image/jpeg"
 }
 
+# Reserve a static IP address for the frontend
 resource "google_compute_global_address" "resume_ip" {
   name = "cloud-resume-ip"
+}
+
+# Create a bucket backend service to serve the static website
+resource "google_compute_backend_bucket" "resume_backend" {
+  name        = "cloud-resume-backend"
+  bucket_name = google_storage_bucket.static_website.name
+  description = "Backend bucket for the cloud resume website"
+  enable_cdn  = true
 }
