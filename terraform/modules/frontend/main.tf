@@ -59,3 +59,71 @@ resource "google_storage_bucket_object" "nourez_jpg" {
   source       = "../../frontend/nourez.jpg"
   content_type = "image/jpeg"
 }
+
+# Reserve a static IP address for the frontend
+resource "google_compute_global_address" "resume_ip" {
+  name = "cloud-resume-ip"
+}
+
+# Create a bucket backend service to serve the static website
+resource "google_compute_backend_bucket" "resume_backend" {
+  name        = "cloud-resume-backend"
+  bucket_name = google_storage_bucket.static_website.name
+  description = "Backend bucket for the cloud resume website"
+  enable_cdn  = true
+}
+
+# Create a HTTPS certificate for the frontend {
+resource "google_compute_managed_ssl_certificate" "resume_cert" {
+  name        = "cloud-resume-cert"
+  description = "Certificate for the cloud resume website"
+  managed {
+    domains = var.cert_domains
+  }
+}
+
+# Route all requests to the backend bucket
+resource "google_compute_url_map" "resume_url_map" {
+  name            = "cloud-resume-lb"
+  default_service = google_compute_backend_bucket.resume_backend.self_link
+}
+
+# Create a load balancer to serve the static website
+resource "google_compute_target_https_proxy" "resume_target_proxy" {
+  name    = "cloud-resume-lb-target-proxy"
+  url_map = google_compute_url_map.resume_url_map.self_link
+  ssl_certificates = [
+    google_compute_managed_ssl_certificate.resume_cert.self_link,
+  ]
+}
+
+# Add a frontend to the load balancer
+resource "google_compute_global_forwarding_rule" "resume_forwarding_rule" {
+  name       = "cloud-resume-lb-forwarding-rule"
+  target     = google_compute_target_https_proxy.resume_target_proxy.self_link
+  ip_address = google_compute_global_address.resume_ip.address
+  port_range = "443"
+}
+
+# Redirect HTTP requests to HTTPS
+resource "google_compute_url_map" "resume_redirect_map" {
+  name = "cloud-resume-lb-http-redirect"
+
+  default_url_redirect {
+    redirect_response_code = "MOVED_PERMANENTLY_DEFAULT"
+    strip_query            = false
+    https_redirect         = true
+  }
+}
+
+resource "google_compute_target_http_proxy" "resume_redirect_proxy" {
+  name    = "cloud-resume-lb-redirect-proxy"
+  url_map = google_compute_url_map.resume_redirect_map.self_link
+}
+
+resource "google_compute_global_forwarding_rule" "resume_redirect_rule" {
+  name       = "cloud-resume-lb-redirect-rule"
+  target     = google_compute_target_http_proxy.resume_redirect_proxy.self_link
+  ip_address = google_compute_global_address.resume_ip.address
+  port_range = "80"
+}
