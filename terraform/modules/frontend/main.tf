@@ -84,13 +84,13 @@ resource "google_compute_managed_ssl_certificate" "resume_cert" {
 
 # Route all requests to the backend bucket
 resource "google_compute_url_map" "resume_url_map" {
-  name            = "cloud-resume-url-map"
+  name            = "cloud-resume-lb"
   default_service = google_compute_backend_bucket.resume_backend.self_link
 }
 
 # Create a load balancer to serve the static website
 resource "google_compute_target_https_proxy" "resume_target_proxy" {
-  name    = "cloud-resume-target-proxy"
+  name    = "cloud-resume-lb-target-proxy"
   url_map = google_compute_url_map.resume_url_map.self_link
   ssl_certificates = [
     google_compute_managed_ssl_certificate.resume_cert.self_link,
@@ -99,7 +99,7 @@ resource "google_compute_target_https_proxy" "resume_target_proxy" {
 
 # Add a frontend to the load balancer
 resource "google_compute_global_forwarding_rule" "resume_forwarding_rule" {
-  name       = "cloud-resume-forwarding-rule"
+  name       = "cloud-resume-lb-forwarding-rule"
   target     = google_compute_target_https_proxy.resume_target_proxy.self_link
   ip_address = google_compute_global_address.resume_ip.address
   port_range = "443"
