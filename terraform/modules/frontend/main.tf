@@ -87,3 +87,12 @@ resource "google_compute_url_map" "resume_url_map" {
   name            = "cloud-resume-url-map"
   default_service = google_compute_backend_bucket.resume_backend.self_link
 }
+
+# Create a target proxty to route requests to the backend bucket
+resource "google_compute_target_https_proxy" "resume_target_proxy" {
+  name    = "cloud-resume-target-proxy"
+  url_map = google_compute_url_map.resume_url_map.self_link
+  ssl_certificates = [
+    google_compute_managed_ssl_certificate.resume_cert.self_link,
+  ]
+}
