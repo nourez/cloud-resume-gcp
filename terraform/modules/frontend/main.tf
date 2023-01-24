@@ -127,3 +127,23 @@ resource "google_compute_global_forwarding_rule" "resume_redirect_rule" {
   ip_address = google_compute_global_address.resume_ip.address
   port_range = "80"
 }
+
+# Update DNS records with load balancers
+data "google_dns_managed_zone" "cloud_resume_zone" {
+  name    = "nourez-dev"
+  project = "cloud-resume-shared-services"
+}
+
+resource "google_dns_record_set" "cloud_resume" {
+  name         = "${var.cert_domains[0]}."
+  type         = "A"
+  ttl          = 300
+  managed_zone = data.google_dns_managed_zone.cloud_resume_zone.name
+  project      = data.google_dns_managed_zone.cloud_resume_zone.project
+
+  rrdatas = [
+    google_compute_global_address.resume_ip.address,
+  ]
+}
+
+
