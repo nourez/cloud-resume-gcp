@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"cloud.google.com/go/firestore"
+	"github.com/gorilla/mux"
 )
 
 const (
@@ -29,15 +30,9 @@ func pageExists(ctx context.Context, client *firestore.Client, pageURL string) b
 
 func incrementCounterEndpoint(w http.ResponseWriter, r *http.Request) {
 	const (
-		methodNotAllowed    = http.StatusMethodNotAllowed
 		internalServerError = http.StatusInternalServerError
 		ok                  = http.StatusOK
 	)
-
-	if r.Method != http.MethodPost {
-		http.Error(w, "Method not allowed", methodNotAllowed)
-		return
-	}
 
 	pageURL := r.FormValue("pageUrl")
 	if pageURL == "" {
@@ -93,6 +88,11 @@ func incrementCounterEndpoint(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	http.HandleFunc("/incrementCounter", incrementCounterEndpoint)
-	http.ListenAndServe(":8080", nil)
+	//http.HandleFunc("/incrementCounter", incrementCounterEndpoint)
+	//http.ListenAndServe(":8080", nil)
+
+	router := mux.NewRouter().StrictSlash(true)
+	router.HandleFunc("/incrementCounter", incrementCounterEndpoint).Methods("POST")
+
+	log.Fatal(http.ListenAndServe(":8080", router))
 }
