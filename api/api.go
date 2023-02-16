@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"log"
 	"net/http"
 
@@ -13,6 +14,13 @@ const (
 	defaultPageURL         = "rootPage"
 	defaultGoogleProjectID = "cloud-resume-sandbox"
 )
+
+type HitCount struct {
+	Action string `json:"action"`
+	Status string `json:"status"`
+	Page   string `json:"page"`
+	Hits   int    `json:"hits"`
+}
 
 func createClient(ctx context.Context) *firestore.Client {
 	client, err := firestore.NewClient(ctx, defaultGoogleProjectID)
@@ -82,9 +90,17 @@ func incrementCounterEndpoint(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.WriteHeader(ok)
-	w.Write([]byte("{\"status\": \"ok\"}"))
+	status := HitCount{
+		Action: "Increment",
+		Status: "Success",
+		Page:   pageURL,
+		Hits:   int(hitCount.(int64)) + 1,
+	}
+
 	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(status)
+	w.WriteHeader(ok)
+
 }
 
 func main() {
