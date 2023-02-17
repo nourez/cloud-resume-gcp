@@ -11,15 +11,18 @@ import (
 )
 
 const (
-	defaultPageURL         = "rootPage"
 	defaultGoogleProjectID = "cloud-resume-sandbox"
 )
 
-type HitCount struct {
+type HitCountResponse struct {
 	Action string `json:"action"`
 	Status string `json:"status"`
 	Page   string `json:"page"`
 	Hits   int    `json:"hits"`
+}
+
+type HitCountRequest struct {
+	PageURL string `json:"pageUrl"`
 }
 
 func createClient(ctx context.Context) *firestore.Client {
@@ -42,10 +45,22 @@ func incrementCounterEndpoint(w http.ResponseWriter, r *http.Request) {
 		ok                  = http.StatusOK
 	)
 
-	pageURL := r.FormValue("pageUrl")
-	if pageURL == "" {
-		pageURL = defaultPageURL
+	// get body from request as a struct
+	var body HitCountRequest
+	var pageURL string
+
+	err := json.NewDecoder(r.Body).Decode(&body)
+	if err != nil {
+		http.Error(w, "Failed to parse body", internalServerError)
+		return
 	}
+
+	if body.PageURL == "" {
+		http.Error(w, "PageURL is required", internalServerError)
+		return
+	}
+
+	pageURL = body.PageURL
 
 	// Open connection to Firestore
 	ctx := context.Background()
@@ -90,7 +105,7 @@ func incrementCounterEndpoint(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	status := HitCount{
+	status := HitCountResponse{
 		Action: "Increment",
 		Status: "Success",
 		Page:   pageURL,
@@ -99,8 +114,6 @@ func incrementCounterEndpoint(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(status)
-	w.WriteHeader(ok)
-
 }
 
 func main() {

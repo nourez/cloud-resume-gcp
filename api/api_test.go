@@ -24,7 +24,7 @@ func TestIncrementWithNewDatabase(t *testing.T) {
 		t.Errorf("handler returned wrong status code: got %v want %v", status, http.StatusOK)
 	}
 
-	expected := HitCount{
+	expected := HitCountResponse{
 		Action: "Increment",
 		Status: "Success",
 		Page:   pageURL,
@@ -35,7 +35,7 @@ func TestIncrementWithNewDatabase(t *testing.T) {
 		t.Errorf("Unable to parse JSON: %v", err)
 	}
 
-	var received HitCount
+	var received HitCountResponse
 	err = json.Unmarshal(recorder.Body.Bytes(), &received)
 	if err != nil {
 		t.Errorf("Unable to parse JSON: %v", err)
