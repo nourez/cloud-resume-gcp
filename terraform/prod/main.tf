@@ -8,6 +8,6 @@ module "frontend" {
 
 module "api" {
   source     = "../modules/api"
-  project_id = "cloud-resume-dev"
+  project_id = "cloud-resume-prod"
   image_tag  = var.image_tag
 }
