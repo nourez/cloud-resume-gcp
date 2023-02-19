@@ -3,15 +3,12 @@ package main
 import (
 	"context"
 	"encoding/json"
+	"flag"
 	"log"
 	"net/http"
 
 	"cloud.google.com/go/firestore"
 	"github.com/gorilla/mux"
-)
-
-const (
-	defaultGoogleProjectID = "cloud-resume-sandbox"
 )
 
 type HitCountResponse struct {
@@ -25,8 +22,14 @@ type HitCountRequest struct {
 	PageURL string `json:"pageUrl"`
 }
 
+// Command line flags values
+var (
+	projectID string
+	portNum   int
+)
+
 func createClient(ctx context.Context) *firestore.Client {
-	client, err := firestore.NewClient(ctx, defaultGoogleProjectID)
+	client, err := firestore.NewClient(ctx, projectID)
 	if err != nil {
 		log.Fatalf("Failed to create client: %v", err)
 	}
@@ -77,6 +80,7 @@ func incrementCounterEndpoint(w http.ResponseWriter, r *http.Request) {
 			"pageUrl":  pageURL,
 		})
 		if err != nil {
+			log.Print(err)
 			http.Error(w, "Failed to create document", internalServerError)
 			return
 		}
@@ -117,8 +121,12 @@ func incrementCounterEndpoint(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	//http.HandleFunc("/incrementCounter", incrementCounterEndpoint)
-	//http.ListenAndServe(":8080", nil)
+	// Parse command line flags
+	flag.StringVar(&projectID, "projectID", "cloud-resume-sandbox", "Google Cloud Project ID")
+	flag.IntVar(&portNum, "port", 8080, "Port Number")
+	flag.Parse()
+
+	log.Printf("Starting API Server on Port %d for Project ID: %s\n", portNum, projectID)
 
 	router := mux.NewRouter().StrictSlash(true)
 	router.HandleFunc("/incrementCounter", incrementCounterEndpoint).Methods("POST")

@@ -25,4 +25,4 @@ RUN addgroup -S nonroot \
 USER nonroot
 
 # Run the binary
-CMD ["./cloud-api"]
+ENTRYPOINT ["./cloud-api"]

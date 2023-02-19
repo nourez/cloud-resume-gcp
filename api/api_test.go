@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
@@ -10,12 +11,13 @@ import (
 )
 
 func TestIncrementWithNewDatabase(t *testing.T) {
-	req, err := http.NewRequest("GET", "/incrementCounter", nil)
+	var jsonStr = []byte(`{"pageUrl": "root"}`)
+	req, err := http.NewRequest("GET", "/incrementCounter", bytes.NewBuffer(jsonStr))
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	pageURL := "rootPage"
+	pageURL := "root"
 	recorder := httptest.NewRecorder()
 	handler := http.HandlerFunc(incrementCounterEndpoint)
 	handler.ServeHTTP(recorder, req)

@@ -53,7 +53,7 @@ jobs:
         run: terraform fmt -check
 
       - name: Terraform Plan
-        run: terraform plan -input=false
+        run: terraform plan -var image_tag=1.0.0 -input=false
 
       - name: Terraform Apply
         run: terraform apply -var image_tag=1.0.0 -auto-approve -input=false
