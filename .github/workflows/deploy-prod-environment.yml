@@ -56,4 +56,4 @@ jobs:
         run: terraform plan -var image_tag=1.0.0 -input=false
 
       - name: Terraform Apply
-        run: terraform apply image_tag=1.0.0 -auto-approve -input=false
+        run: terraform apply -var image_tag=1.0.0 -auto-approve -input=false
