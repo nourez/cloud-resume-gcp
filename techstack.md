@@ -32,7 +32,7 @@ Full tech stack [here](/techstack.md)
 # Tech Stack File
 ![](https://img.stackshare.io/repo.svg "repo") [nourez/cloud-resume-gcp](https://github.com/nourez/cloud-resume-gcp)![](https://img.stackshare.io/public_badge.svg "public")
 <br/><br/>
-|8<br/>Tools used|03/02/24 <br/>Report generated|
+|8<br/>Tools used|03/03/24 <br/>Report generated|
 |------|------|
 </div>
 
